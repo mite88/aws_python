@@ -8,10 +8,21 @@ iris_bp = Blueprint('iris', __name__)
 
 # 2. 모델 경로 설정
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, '..', 'models', 'iris_model.pkl')
+
 
 # 3. 모델 로드
-model = joblib.load(MODEL_PATH)
+# 🔥 여러 모델 로드
+MODELS = {
+    "Logistic Regression": joblib.load(
+        os.path.join(BASE_DIR, '..', 'models', 'iris_logistic.pkl')
+    ),
+    "Decision Tree": joblib.load(
+        os.path.join(BASE_DIR, '..', 'models', 'iris_tree.pkl')
+    ),
+    "Random Forest": joblib.load(
+        os.path.join(BASE_DIR, '..', 'models', 'iris_forest.pkl')
+    )
+}
 
 # 4. 홈 페이지
 @iris_bp.route('/', methods=['GET'])
@@ -22,28 +33,34 @@ def home():
     return render_template('index.html')
 
 # 5. 예측 처리
-@iris_bp.route('/predict', methods=['POST'])
+@iris_bp.route('/iris/predict', methods=['POST'])
 def predict():
-    """
-    HTML Form 입력 → 모델 예측 → 결과 반환
-    """
-
-    sepal_length = float(request.form['sepal_length'])
-    sepal_width  = float(request.form['sepal_width'])
-    petal_length = float(request.form['petal_length'])
-    petal_width  = float(request.form['petal_width'])
-
     features = [[
-        sepal_length,
-        sepal_width,
-        petal_length,
-        petal_width
+        float(request.form['sepal_length']),
+        float(request.form['sepal_width']),
+        float(request.form['petal_length']),
+        float(request.form['petal_width'])
     ]]
 
-    pred_idx = model.predict(features)[0]
-    pred_label = CLASS_NAMES[pred_idx]
+    results = []
+
+    for model_name, model in MODELS.items():
+        pred_idx = model.predict(features)[0]
+        pred_label = CLASS_NAMES[pred_idx]
+
+        proba = model.predict_proba(features)[0]
+        proba_dict = {
+            CLASS_NAMES[i]: round(float(p), 3)
+            for i, p in enumerate(proba)
+        }
+
+        results.append({
+            "model": model_name,
+            "prediction": pred_label,
+            "probabilities": proba_dict
+        })
 
     return render_template(
-        'index.html',
-        prediction=pred_label
+        "index.html",
+        results=results
     )

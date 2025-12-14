@@ -96,7 +96,102 @@ ml-study/
 
 ---
 
-## 5. 실무 기준 학습 흐름
+## 5. 실행 순서 (중요 ⭐)
+
+### 1️⃣ 가상환경 활성화
+
+```bash
+source flask/bin/activate
+```
+
+---
+
+### 2️⃣ 실습 코드 확인 / 실행 (분석 단계)
+
+```bash
+# Jupyter 실행
+jupyter notebook
+```
+
+- notebooks/01_iris.py
+- notebooks/02_breast_cancer.py
+- notebooks/03_wine.py
+....
+
+👉 데이터 분포, 시각화, 모델 비교 목적
+
+---
+
+### 3️⃣ 모델 학습 (train 스크립트 실행)
+
+```bash
+python ml/iris_train.py
+```
+
+정상 실행 시:
+- models/iris_logistic.pkl
+- models/iris_tree.pkl
+- models/iris_forest.pkl
+
+파일이 생성됨
+
+---
+
+### 4️⃣ Flask 서버 실행 (서비스 단계)
+
+```bash
+python app.py
+```
+
+
+* 서버에서 자동 실행하기 위한 방법
+
+```
+pip install gunicorn
+
+sudo nano /etc/systemd/system/flask.service
+```
+
+```
+[Unit]
+Description=Flask ML Study Service
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/flask/ml-study
+Environment="PATH=/home/ubuntu/flask/bin"
+ExecStart=/home/ubuntu/flask/bin/gunicorn -w 4 -b 0.0.0.0:5000 app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```
+sudo systemctl daemon-reload
+sudo systemctl start flask
+sudo systemctl enable flask
+
+# 상태확인
+sudo systemctl status flask
+```
+---
+
+### 5️⃣ 브라우저 접속
+
+```text
+http://127.0.0.1:5000/
+or
+http://13.237.30.109:5000/
+```
+
+- HTML 입력 폼 표시
+- 예측 결과 + 모델별 확률 확인 가능
+
+---
+
+## 6. 실무 기준 학습 흐름
 
 ```text
 [노트북 / .py 실습]
@@ -120,7 +215,8 @@ ml-study/
 
 | 파일 종류 | 목적 | 실행 / 확인 방법 |
 |---------|------|----------------|
-| `*.ipynb, py` | 데이터 이해, 시각화, 실습 흐름 복습 | Jupyter, VSCode |
+| `*.ipynb` | 데이터 이해, 시각화 | Jupyter |
+| `01_iris.py` | 실습 흐름 복습 | VSCode |
 | `*_train.py` | 모델 학습 | 터미널 |
 | `app.py` | Flask 서버 실행 | 터미널 |
 | `routes/*.py` | 웹 요청 처리 | Flask |
@@ -207,3 +303,4 @@ templates/
 
 > 이 프로젝트는  
 > **머신러닝 실습을 서비스 관점으로 확장하기 위한 학습용 베이스 프로젝트**이다.
+
