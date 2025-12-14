@@ -27,13 +27,10 @@ MODELS = {
 # 4. 홈 페이지
 @iris_bp.route('/', methods=['GET'])
 def home():
-    """
-    Iris 예측 입력 화면
-    """
-    return render_template('index.html')
+    return render_template('iris.html')
 
 # 5. 예측 처리
-@iris_bp.route('/iris/predict', methods=['POST'])
+@iris_bp.route('/predict', methods=['POST'])
 def predict():
     features = [[
         float(request.form['sepal_length']),
@@ -54,13 +51,16 @@ def predict():
             for i, p in enumerate(proba)
         }
 
+        best_label = max(proba_dict, key=proba_dict.get)
+        best_proba = proba_dict[best_label]
+
         results.append({
             "model": model_name,
             "prediction": pred_label,
-            "probabilities": proba_dict
+            "probabilities": proba_dict,
+            "best_label": best_label,
+            "best_proba": best_proba
         })
 
-    return render_template(
-        "index.html",
-        results=results
-    )
+    # ✅ 여기만 바꾸면 끝
+    return render_template("iris.html", results=results)

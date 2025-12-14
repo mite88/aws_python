@@ -85,7 +85,10 @@ ml-study/
 │
 ├── templates/            # HTML 템플릿
 │   ├── base.html
-│   └── index.html
+│   ├── index.html
+│   ├── iris.html         ← Iris 입력/결과
+│   ├── cancer.html
+│   └── housing.html
 │
 ├── static/               # 정적 리소스
 │   ├── css/style.css
@@ -175,6 +178,10 @@ sudo systemctl enable flask
 
 # 상태확인
 sudo systemctl status flask
+
+# 재실행
+sudo systemctl restart flask.service
+
 ```
 ---
 
@@ -215,8 +222,7 @@ http://13.237.30.109:5000/
 
 | 파일 종류 | 목적 | 실행 / 확인 방법 |
 |---------|------|----------------|
-| `*.ipynb` | 데이터 이해, 시각화 | Jupyter |
-| `01_iris.py` | 실습 흐름 복습 | VSCode |
+| `*.ipynb. .py` | 데이터 이해, 시각화, 흐름복습 | Jupyter, VSCode |
 | `*_train.py` | 모델 학습 | 터미널 |
 | `app.py` | Flask 서버 실행 | 터미널 |
 | `routes/*.py` | 웹 요청 처리 | Flask |
