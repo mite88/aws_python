@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>Wine Classifier</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    label { display:block; font-size: 13px; margin-bottom: 4px; }
+    input { width: 100%; padding: 8px; }
+    button { padding: 10px 14px; margin-top: 16px; }
+    .card { margin-top: 20px; padding: 14px; border: 1px solid #ddd; border-radius: 10px; }
+    .err { color: #b00020; }
+    code { background: #f6f6f6; padding: 2px 6px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>🍷 Wine 다중분류 예측</h1>
+  <p>13개 feature를 입력하면 <code>Class 0/1/2</code> 중 하나로 예측합니다.</p>
+
+  <form method="POST" action="/wine/predict">
+    <div class="grid">
+      {% for f in features %}
+        <div>
+          <label for="{{f}}">{{f}}</label>
+          <input
+            id="{{f}}"
+            name="{{f}}"
+            type="number"
+            step="any"
+            required
+            value="{{ (form[f] if form and f in form else '') }}"
+          />
+        </div>
+      {% endfor %}
+    </div>
+
+    <button type="submit">예측하기</button>
+  </form>
+
+  {% if error %}
+    <div class="card err">
+      <b>에러:</b> {{ error }}
+    </div>
+  {% endif %}
+
+  {% if result %}
+    <div class="card">
+      <h2>✅ 예측 결과: {{ result.pred_name }} ({{ result.pred_idx }})</h2>
+      <p>
+        확률:
+        Class0={{ "%.4f"|format(result.proba[0]) }},
+        Class1={{ "%.4f"|format(result.proba[1]) }},
+        Class2={{ "%.4f"|format(result.proba[2]) }}
+      </p>
+    </div>
+  {% endif %}
+</body>
+</html>
