@@ -249,6 +249,8 @@ plt.show()
 # ================================
 # 어떤 클래스를 헷갈리는지 확인하기 위함
 # Confusion Matrix = 모델의 오답 노트
+from sklearn.metrics import confusion_matrix
+
 cm = confusion_matrix(y_test, y_pred)
 
 plt.figure(figsize=(5, 4))
